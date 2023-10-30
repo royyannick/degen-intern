@@ -1,0 +1,2 @@
+streamlit
+streamlit_lightweight_charts

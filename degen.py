@@ -270,7 +270,8 @@ expand_todo.markdown('- [ ] Report')
 if expand_todo.button('Clear Cache 👍'):
     st.cache_data.clear()
 if expand_todo.button('Fetch no Cache'):
-    fetch_prices2(selected_token, start_timestamp, end_timestamp, interval=interval)
+    df_prices2 = fetch_prices2(selected_token, start_timestamp, end_timestamp, interval=interval)
+    st.write(df_prices2)
 
 st.sidebar.markdown('---')
 st.sidebar.markdown('`May the gains be with you. 🚀 🌕`')

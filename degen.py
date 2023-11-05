@@ -213,10 +213,11 @@ if side_button_col4.button('1Y', use_container_width=True):
 
 if st.sidebar.button('Fetch Prices', use_container_width=True):
     try:
-        print(f'Fetching prices with: {selected_token}, {start_timestamp}, {end_timestamp}, {interval}')
+        st.write(f'Fetching prices with: {selected_token}, {start_timestamp}, {end_timestamp}, {interval}')
         # Fetch prices
         price_df = fetch_prices(selected_token, start_timestamp, end_timestamp, interval=interval)
         st.session_state['price_df'] = price_df
+        st.write(price_df)
         if len(price_df) == 1000:
             st.sidebar.warning('1000 Limit Reached.')
             st.sidebar.warning('Dymanic pagination coming soon!')

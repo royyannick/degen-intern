@@ -145,8 +145,11 @@ def fetch_prices2(token, start_time, end_time=None, interval='1h'):
         pair, interval, str(start_time*1000), str(end_time*1000))
     print(binance_url)
     st.write(binance_url)
-
-    price_response = ast.literal_eval(requests.get(binance_url).text)
+    
+    response = requests.get(binance_url).text
+    st.write(response)
+    price_response = ast.literal_eval(response)
+    st.write(price_response)
     price_df = pd.DataFrame(price_response, columns=['time', 'open', 'high', 'low', 'close', 'volume', 'date', 'asset_vol', 'txs', 'irr', 'irr2', 'irr3'])
     price_df = price_df[['time', 'open', 'high', 'low', 'close', 'volume']]
     price_df['time'] = price_df['time'].apply(lambda x: int(x/1000))

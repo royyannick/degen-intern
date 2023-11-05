@@ -200,24 +200,28 @@ end_timestamp = int(end_date.strftime('%s'))
 side_button_col1, side_button_col2, side_button_col3, side_button_col4 = st.sidebar.columns([1,1,1,1])
 if side_button_col1.button('1D', use_container_width=True):
     st.session_state['date_range'] = "1D"
-    st.experimental_rerun()
+    st.rerun()
 if side_button_col2.button('1W', use_container_width=True):
     st.session_state['date_range'] = "1W"
-    st.experimental_rerun()
+    st.rerun()
 if side_button_col3.button('1M', use_container_width=True):
     st.session_state['date_range'] = "1M"
-    st.experimental_rerun()
+    st.rerun()
 if side_button_col4.button('1Y', use_container_width=True):
     st.session_state['date_range'] = "1Y"
-    st.experimental_rerun()
+    st.rerun()
 
 if st.sidebar.button('Fetch Prices', use_container_width=True):
-    # Fetch prices
-    price_df = fetch_prices(selected_token, start_timestamp, end_timestamp, interval=interval)
-    st.session_state['price_df'] = price_df
-    if len(price_df) == 1000:
-        st.sidebar.warning('1000 Limit Reached.')
-        st.sidebar.warning('Dymanic pagination coming soon!')
+    try:
+        print(f'Fetching prices with: {selected_token}, {start_timestamp}, {end_timestamp}, {interval}')
+        # Fetch prices
+        price_df = fetch_prices(selected_token, start_timestamp, end_timestamp, interval=interval)
+        st.session_state['price_df'] = price_df
+        if len(price_df) == 1000:
+            st.sidebar.warning('1000 Limit Reached.')
+            st.sidebar.warning('Dymanic pagination coming soon!')
+    except Exception as e:
+        st.sidebar.exception(e)
 
 price_df = st.session_state['price_df']
 if len(price_df) > 0:

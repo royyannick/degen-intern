@@ -122,6 +122,7 @@ def plot_chart(price_df, liquidation_price=None):
         }
     ], 'candlestick')
 
+
 @st.cache_data
 def fetch_prices(token, start_time, end_time=None, interval='1h'):
     pair = token+'USDT'
@@ -251,6 +252,8 @@ expand_todo.markdown('- [ ] Trends')
 expand_todo.markdown('- [ ] Recommendations')
 expand_todo.markdown('- [ ] Sweep Tokens')
 expand_todo.markdown('- [ ] Report')
+if expand_todo.button('Clear Cache 👍'):
+    st.cache_data.clear()
 
 st.sidebar.markdown('---')
 st.sidebar.markdown('`May the gains be with you. 🚀 🌕`')

@@ -139,6 +139,21 @@ def fetch_prices(token, start_time, end_time=None, interval='1h'):
     return price_df
 
 
+def fetch_prices2(token, start_time, end_time=None, interval='1h'):
+    pair = token+'USDT'
+    binance_url = "https://api.binance.com/api/v3/klines?symbol={}&interval={}&startTime={}&endTime={}&limit=1000".format(
+        pair, interval, str(start_time*1000), str(end_time*1000))
+    print(binance_url)
+    st.write(binance_url)
+
+    price_response = ast.literal_eval(requests.get(binance_url).text)
+    price_df = pd.DataFrame(price_response, columns=['time', 'open', 'high', 'low', 'close', 'volume', 'date', 'asset_vol', 'txs', 'irr', 'irr2', 'irr3'])
+    price_df = price_df[['time', 'open', 'high', 'low', 'close', 'volume']]
+    price_df['time'] = price_df['time'].apply(lambda x: int(x/1000))
+
+    return price_df
+
+
 def calculate_liquidation_price(entry_price, leverage, liquidation_limit=0.95, is_long=True):
     """
     Calculate the liquidation price for a long position based on entry price, leverage, and liquidation limit.
@@ -254,6 +269,8 @@ expand_todo.markdown('- [ ] Sweep Tokens')
 expand_todo.markdown('- [ ] Report')
 if expand_todo.button('Clear Cache 👍'):
     st.cache_data.clear()
+if expand_todo.button('Fetch no Cache'):
+    fetch_prices2(selected_token, start_timestamp, end_timestamp, interval=interval)
 
 st.sidebar.markdown('---')
 st.sidebar.markdown('`May the gains be with you. 🚀 🌕`')

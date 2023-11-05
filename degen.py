@@ -128,6 +128,7 @@ def fetch_prices(token, start_time, end_time=None, interval='1h'):
     binance_url = "https://api.binance.com/api/v3/klines?symbol={}&interval={}&startTime={}&endTime={}&limit=1000".format(
         pair, interval, str(start_time*1000), str(end_time*1000))
     print(binance_url)
+    st.write(binance_url)
 
     price_response = ast.literal_eval(requests.get(binance_url).text)
     price_df = pd.DataFrame(price_response, columns=['time', 'open', 'high', 'low', 'close', 'volume', 'date', 'asset_vol', 'txs', 'irr', 'irr2', 'irr3'])

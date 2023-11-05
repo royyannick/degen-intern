@@ -30,6 +30,9 @@ if st.session_state.get('liquidation_price') is None:
 if st.session_state.get('date_range') is None:
     st.session_state['date_range'] = "custom"
 
+if st.session_state.get('prices_source') is None:
+    st.session_state['prices_source'] = "Binance"
+
 # ==========================================================================================
 # ==========================================================================================
 # Utility Functions
@@ -126,18 +129,19 @@ def plot_chart(price_df, liquidation_price=None):
 @st.cache_data
 def fetch_prices(token, start_time, end_time=None, interval='1h', source='Binance'):
     if source == 'Binance':
+        BINANCE_API_URL = 'https://api.binance.us'  # 'https://api.binance.com'
         pair = token+'USDT'
-        binance_url = "https://api.binance.us/api/v3/klines?symbol={}&interval={}&startTime={}&endTime={}&limit=1000".format(
-            pair, interval, str(start_time*1000), str(end_time*1000))
+        binance_url = "{}/api/v3/klines?symbol={}&interval={}&startTime={}&endTime={}&limit=1000".format(
+            BINANCE_API_URL, pair, interval, str(start_time*1000), str(end_time*1000))
         print(binance_url)
-        st.write(binance_url)
+        #st.write(binance_url)
 
         price_response = ast.literal_eval(requests.get(binance_url).text)
         price_df = pd.DataFrame(price_response, columns=['time', 'open', 'high', 'low', 'close', 'volume', 'date', 'asset_vol', 'txs', 'irr', 'irr2', 'irr3'])
         price_df = price_df[['time', 'open', 'high', 'low', 'close', 'volume']]
         price_df['time'] = price_df['time'].apply(lambda x: int(x/1000))
     elif source == 'Coingecko':
-        st.write('Working on it.')
+        st.information('Working on it!')
 
     return price_df
 
@@ -170,11 +174,6 @@ def calculate_liquidation_price(entry_price, leverage, liquidation_limit=0.95, i
 # ==========================================================================================
 st.set_page_config(layout="wide")
 st.header("🦍 Degen Together Strong.")
-
-st.sidebar.markdown('## Degen Config')
-
-# Sidebar
-prices_source = st.sidebar.radio('Prices Source:', ['Binance', 'Goingecko'], horizontal=True)
 
 # Symbol selection
 selected_crypto_fullname = st.sidebar.selectbox('Select Token:', list(TOKEN_MAPPING))
@@ -223,11 +222,11 @@ if side_button_col4.button('1Y', use_container_width=True):
 
 if st.sidebar.button('Fetch Prices', use_container_width=True):
     try:
-        st.write(f'Fetching prices with: {selected_token}, {start_timestamp}, {end_timestamp}, {interval}')
+        #st.write(f'Fetching prices with: {selected_token}, {start_timestamp}, {end_timestamp}, {interval}')
         # Fetch prices
         price_df = fetch_prices(selected_token, start_timestamp, end_timestamp, interval=interval)
         st.session_state['price_df'] = price_df
-        st.write(price_df)
+        #st.write(price_df)
         if len(price_df) == 1000:
             st.sidebar.warning('1000 Limit Reached.')
             st.sidebar.warning('Dymanic pagination coming soon!')
@@ -262,6 +261,7 @@ expand_todo.markdown('- [ ] Sweep Tokens')
 expand_todo.markdown('- [ ] Report')
 if expand_todo.button('Clear Cache 👍'):
     st.cache_data.clear()
+st.session_state['prices_source'] = expand_todo.radio('Prices Source:', ['Binance', 'Goingecko'], horizontal=True)
 
 st.sidebar.markdown('---')
 st.sidebar.markdown('`May the gains be with you. 🚀 🌕`')
